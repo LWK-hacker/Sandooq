@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Dashboard - Sandooq</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f6f6f6;
+      padding: 30px;
+    }
+    .dashboard {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    }
+    h2 {
+      text-align: center;
+    }
+    input, textarea, select {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 10px 20px;
+      background: #111;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .img-preview {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    .img-preview img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="dashboard">
+  <h2>Add Product</h2>
+  <form id="productForm">
+    <input type="text" id="pname" placeholder="Product Name" required />
+    <textarea id="pdesc" placeholder="Description" required></textarea>
+    <input type="number" id="pprice" placeholder="Price (Rs.)" required />
+    <select id="pdelivery">
+      <option value="Free Delivery">Free Delivery</option>
+      <option value="Rs.200 Delivery">Rs.200 Delivery</option>
+    </select>
+    <select id="pcategory" required>
+      <option value="">Select Category</option>
+      <option value="Clothing">Clothing</option>
+      <option value="Accessories">Accessories</option>
+      <option value="Electronics">Electronics</option>
+    </select>
+    <input type="file" id="pimages" accept="image/*" multiple required />
+    <div class="img-preview" id="previewBox"></div>
+    <button type="submit">Add Product</button>
+  </form>
+</div>
+
+<script>
+  const productForm = document.getElementById("productForm");
+  const previewBox = document.getElementById("previewBox");
+  const imgInput = document.getElementById("pimages");
+
+  let imageData = [];
+
+  imgInput.addEventListener("change", function () {
+    previewBox.innerHTML = "";
+    imageData = [];
+
+    Array.from(this.files).forEach(file => {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        imageData.push(e.target.result);
+        const img = document.createElement("img");
+        img.src = e.target.result;
+        previewBox.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+
+  productForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const pname = document.getElementById("pname").value;
+    const pdesc = document.getElementById("pdesc").value;
+    const pprice = document.getElementById("pprice").value;
+    const pdelivery = document.getElementById("pdelivery").value;
+    const pcategory = document.getElementById("pcategory").value;
+
+    if (!imageData.length) {
+      alert("Please select product images.");
+      return;
+    }
+
+    const product = {
+      id: "prod_" + Date.now(),
+      name: pname,
+      desc: pdesc,
+      price: pprice,
+      delivery: pdelivery,
+      category: pcategory,
+      images: imageData
+    };
+
+    const products = JSON.parse(localStorage.getItem("sandooq_products")) || [];
+    products.push(product);
+    localStorage.setItem("sandooq_products", JSON.stringify(products));
+
+    alert("Product added successfully!");
+    productForm.reset();
+    previewBox.innerHTML = "";
+    imageData = [];
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Login - Sandooq</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .admin-login {
+      background: white;
+      padding: 30px;
+      width: 350px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    .admin-login h2 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .admin-login input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    .admin-login button {
+      width: 100%;
+      padding: 10px;
+      background: #111;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-login">
+    <h2>Admin Panel</h2>
+    <form id="adminLoginForm">
+      <input type="text" id="adminUser" placeholder="Username" required />
+      <input type="password" id="adminPass" placeholder="Password" required />
+      <button type="submit">Login</button>
+    </form>
+  </div>
+
+  <script>
+    const adminLoginForm = document.getElementById("adminLoginForm");
+
+    adminLoginForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const user = document.getElementById("adminUser").value;
+      const pass = document.getElementById("adminPass").value;
+
+      // Hardcoded admin credentials
+      if (user === "admin" && pass === "sandooq123") {
+        localStorage.setItem("admin_token", "yes");
+        window.location.href = "admin-dashboard.html";
+      } else {
+        alert("Invalid admin login.");
+      }
+    });
+  </script>
+</body>
+</html>

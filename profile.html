@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sandooq</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #fafafa;
+      padding: 30px;
+    }
+    .profile-box {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+    .profile-box h2 {
+      margin-bottom: 15px;
+    }
+    .profile-box p {
+      margin: 5px 0;
+    }
+    .logout-btn {
+      margin-top: 20px;
+      background: crimson;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-box" id="profileContent">
+    <!-- User info will be injected here -->
+  </div>
+
+  <script>
+    const users = JSON.parse(localStorage.getItem("sandooq_users")) || [];
+    const token = localStorage.getItem("sandooq_token");
+
+    const currentUser = users.find(u => u.id === token);
+
+    if (!currentUser) {
+      alert("Please login first.");
+      window.location.href = "login.html";
+    } else {
+      document.getElementById("profileContent").innerHTML = `
+        <h2>👋 Welcome, ${currentUser.name}</h2>
+        <p><strong>Email:</strong> ${currentUser.email}</p>
+        <p><strong>Phone:</strong> ${currentUser.phone}</p>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+      `;
+    }
+
+    function logout() {
+      localStorage.removeItem("sandooq_token");
+      window.location.href = "login.html";
+    }
+  </script>
+</body>
+</html>

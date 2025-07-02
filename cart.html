@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cart - Sandooq</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f9f9f9;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .cart-container {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    }
+    .cart-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      gap: 15px;
+    }
+    .cart-item img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .cart-item h4 {
+      margin: 0;
+    }
+    .cart-item p {
+      margin: 2px 0;
+      font-size: 14px;
+    }
+    .order-form {
+      margin-top: 30px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      padding: 12px 20px;
+      background: #25D366;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h2>🛒 Your Cart - Sandooq</h2>
+
+<div class="cart-container" id="cartContainer">
+  <!-- Items and form will appear here -->
+</div>
+
+<script>
+  const cartIds = JSON.parse(localStorage.getItem("sandooq_cart")) || [];
+  const allProducts = JSON.parse(localStorage.getItem("sandooq_products")) || [];
+  const cartContainer = document.getElementById("cartContainer");
+
+  const cartProducts = allProducts.filter(p => cartIds.includes(p.id));
+
+  if (cartProducts.length === 0) {
+    cartContainer.innerHTML = "<p>Your cart is empty.</p>";
+  } else {
+    let total = 0;
+    let html = "";
+
+    cartProducts.forEach(p => {
+      total += parseInt(p.price);
+      html += `
+        <div class="cart-item">
+          <img src="${p.images[0]}" />
+          <div>
+            <h4>${p.name}</h4>
+            <p>Rs. ${p.price} (${p.delivery})</p>
+          </div>
+        </div>
+      `;
+    });
+
+    html += `
+      <h3>Total: Rs. ${total}</h3>
+      <div class="order-form">
+        <h4>📦 Delivery Details</h4>
+        <input type="text" id="orderName" placeholder="Your Name" required />
+        <input type="text" id="orderPhone" placeholder="Phone Number" required />
+        <textarea id="orderAddress" placeholder="Full Delivery Address" required></textarea>
+        <button onclick="placeOrder()">Place Order on WhatsApp</button>
+      </div>
+    `;
+
+    cartContainer.innerHTML = html;
+  }
+
+  function placeOrder() {
+    const name = document.getElementById("orderName").value.trim();
+    const phone = document.getElementById("orderPhone").value.trim();
+    const address = document.getElementById("orderAddress").value.trim();
+
+    if (!name || !phone || !address) {
+      alert("Please fill all details.");
+      return;
+    }
+
+    let message = `🛒 *New Order from Sandooq*\n\n*Name:* ${name}\n*Phone:* ${phone}\n*Address:* ${address}\n\n*Products:*`;
+
+    cartProducts.forEach(p => {
+      message += `\n- ${p.name} (Rs. ${p.price})`;
+    });
+
+    const total = cartProducts.reduce((sum, p) => sum + parseInt(p.price), 0);
+    message += `\n\n*Total:* Rs. ${total}`;
+
+    const whatsappUrl = `https://wa.me/923367027845?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, "_blank");
+
+    localStorage.removeItem("sandooq_cart");
+    alert("Order sent! Cart cleared.");
+    window.location.href = "shop.html";
+  }
+</script>
+
+</body>
+</html>
